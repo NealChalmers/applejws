@@ -1,4 +1,4 @@
-module github.com/NealChalmers/appstorejws
+module github.com/NealChalmers/applejws
 
 go 1.16
 

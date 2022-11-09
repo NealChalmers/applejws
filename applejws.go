@@ -1,4 +1,4 @@
-package appstorejws
+package applejws
 
 import (
 	"crypto/x509"
@@ -9,17 +9,19 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+var appleRootCer *x509.Certificate
+
+// download from https://www.apple.com/certificateauthority/ you can also install it into you system manually.
+//
+//go:embed AppleCertificateAuthority/AppleRootCA-G3.cer
+var appleRootCerBytes []byte
+
 // https://www.apple.com/certificateauthority/
 func init() {
 	var err error
-	appleCers = new(appleCerS)
-	appleCers.rootCer, err = x509.ParseCertificate(appleRootCer)
+	appleRootCer, err = x509.ParseCertificate(appleRootCerBytes)
 	if err != nil {
 		panic(fmt.Sprintf("parse apple root cert error:%v", err))
-	}
-	appleCers.intermediateCer, err = x509.ParseCertificate(appleimCer)
-	if err != nil {
-		panic(fmt.Sprintf("parse apple intermedia cert error:%v", err))
 	}
 }
 
@@ -31,7 +33,7 @@ func DecodeJWS(jwtStr string, claims jwt.Claims) (jwt.Claims, error) {
 	return jwtToken.Claims, nil
 }
 
-//https://developer.apple.com/documentation/appstoreservernotifications/jwstransactiondecodedpayload
+// https://developer.apple.com/documentation/appstoreservernotifications/jwstransactiondecodedpayload
 type JWSTransactionPayload struct {
 	AppAccountToken             string `json:"appAccountToken"`
 	BundleId                    string `json:"bundleId"`
